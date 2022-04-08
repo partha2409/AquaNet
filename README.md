@@ -4,6 +4,7 @@ This repository contains a sample code to show the usage of Clotho-AQA audio que
 If you use our dataset, please consider citing our paper.
 
 # Downloading the Clotho-AQA dataset
+Download the clotho-AQA dataset from 'Zenodo link'. Extract place the audio files in <dataset\audio_files> directory.  
 # Extracting features
 # Training the model
 # Inference
