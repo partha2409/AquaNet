@@ -4,10 +4,10 @@ This repository contains a sample code to show the usage of Clotho-AQA audio que
 If you use our dataset, please consider citing our paper.
 
 # Downloading the Clotho-AQA dataset
-Download the clotho-AQA dataset from 'Zenodo link'. Extract the zip file and place the audio files in `dataset/audio_files` directory. Place the csv files in `metadata` directory 
+Download the clotho-AQA dataset from 'Zenodo link'. Extract the zip file and place the audio files in `dataset/audio_files` directory. Place the csv files in `metadata/` directory. 
 # Extracting features
 In this baseline model, we use the openL3 open source python library to computing deep audio embeddings. To compute the embeddings first install openL3 using
-`pip install openl3`
+`pip install openl3`.
 
 Now, run `extract_embeddings.py` . This may take a while to compute the embeddings for all the audio files in the dataset. Once it is complete, you should be able to find the deep audio embeddings stored in `dataset/features` 
 
