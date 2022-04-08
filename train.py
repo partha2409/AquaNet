@@ -106,7 +106,7 @@ def train(pre_trained=None):
         plt.legend(loc='best')
         plt.savefig(checkpoints_folder + "/accuracy.jpeg", bbox_inches="tight")
         plt.clf()
-        if (epoch+1) % 10 == 0:
+        if (epoch+1) % 10 == 0: # save every 10th epoch
             net_save = {'net': model.state_dict(), 'opt': optimizer.state_dict(), 'epoch': epoch}
             torch.save(net_save, checkpoints_folder + "/aquanet_epoch{}.pth".format(epoch))
 
