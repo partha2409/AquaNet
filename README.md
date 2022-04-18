@@ -9,7 +9,7 @@ Download the clotho-AQA dataset from 'Zenodo link'. Extract the zip file and pla
 In this baseline model, we use the openL3 open source python library to computing deep audio embeddings. To compute the embeddings first install openL3 using
 `pip install openl3`.
 
-Now, run `extract_embeddings.py` . This may take a while to compute the embeddings for all the audio files in the dataset. Once it is complete, you should be able to find the deep audio embeddings stored in `dataset/features` 
+Now, run `extract_features.py` . This may take a while to compute the embeddings for all the audio files in the dataset. Once it is complete, you should be able to find the deep audio embeddings stored in `dataset/features` 
 
 We also use Fasttext word vectors trained on Wikipedia 2017, UMBC webbase corpus and statmt.org news dataset to create word embeddings for our questions. This can be downloaded from https://dl.fbaipublicfiles.com/fasttext/vectors-english/wiki-news-300d-1M.vec.zip 
 # Training the model
