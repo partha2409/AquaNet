@@ -37,8 +37,12 @@ model_config = {
     # classification
     'n_dense1_units': 256,
     'n_dense2_units': 128,
-    'n_classes': 1  # To be changed based on answers
 }
+
+if 'binary' in data_config['train_metadata_path']:
+    model_config['n_classes'] = 1
+else:
+    model_config['n_classes'] = 828
 
 dense1_input = 0
 if model_config['audio_bidirectional']:
