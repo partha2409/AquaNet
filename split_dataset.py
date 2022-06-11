@@ -9,8 +9,8 @@ def split_data_into_binary_and_single_word_answers(csv_file, split):
     data_single_word = csv_data[~csv_data['answer'].isin(select)]
     data_binary = csv_data[csv_data['answer'].isin(select)]
 
-    with open('metadata\\single_word_{}.csv'.format(split), 'wb') as f:
-         data_single_word.to_csv(f, index=False)
+    #with open('metadata\\single_word_{}.csv'.format(split), 'wb') as f:
+    #     data_single_word.to_csv(f, index=False)
     
     with open('metadata\\binary_{}.csv'.format(split), 'wb') as f:
          data_binary.to_csv(f, index=False)
