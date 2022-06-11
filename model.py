@@ -6,6 +6,7 @@ import torch.nn.functional as F
 class AquaNet(nn.Module):
     def __init__(self, hp):
         super(AquaNet, self).__init__()
+        self.hp = hp
         self.audio_lstm = nn.LSTM(input_size=hp['audio_input_size'], hidden_size=hp['audio_lstm_hidden_size'], num_layers=hp['audio_lstm_n_layers'],
                                   batch_first=True, dropout=hp['audio_lstm_dropout'], bidirectional=hp['audio_bidirectional'])
 
@@ -29,7 +30,11 @@ class AquaNet(nn.Module):
 
         dense_out = F.relu(self.dense_layer1(merge_feat))
         dense_out = F.relu(self.dense_layer2(dense_out))
-        logits = self.sigmoid(self.classification_layer(dense_out))
+        
+        if hp[n_classes]==1:
+            logits = self.sigmoid(self.classification_layer(dense_out))
+        else:
+            logits = self.classification_layer(dense_out)
         return logits
 
 
@@ -43,3 +48,13 @@ class BinaryCrossEntropyLoss(nn.Module):
         target = torch.reshape(target, [-1])
         loss = self.bce_loss(prediction, target)
         return loss
+
+class CrossEntropyLoss(nn.Module):
+    def __init__(self):
+        super(CrossEntropyLoss, self).__init__()
+        self.ce_loss = nn.CrossEntropyLoss()
+
+    def forward(self, prediction, target):
+        loss = self.ce_loss(prediction, target)
+        return loss
+
