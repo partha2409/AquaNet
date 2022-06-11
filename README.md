@@ -15,4 +15,4 @@ We also use Fasttext word vectors trained on Wikipedia 2017, UMBC webbase corpus
 # Training the model
 To train the model run `train.py`. The model checkpoint will be saved for every 10 epochs. If you want to continue training from a saved checkpoint, assign the checkpoint path to `pre_trained_model_path` variable in `train.py`
 # Inference
-
+Once the model is trained, update the variables `model_dir` and `model_path` in `run_inference.py` and execute the file.
