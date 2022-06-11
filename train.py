@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 from torch.utils.data import DataLoader
-from model import AquaNet, BinaryCrossEntropyLoss
+from model import AquaNet, BinaryCrossEntropyLoss, CrossEntropyLoss
 from data_generator import DataGenerator
 from conifg import data_config, model_config
 import time
@@ -33,7 +33,10 @@ def train(pre_trained=None):
     # create model and loss
 
     model = AquaNet(model_config).to(device)
-    loss = BinaryCrossEntropyLoss().to(device)
+    if 'binary' in data_config['train_metadata_path']:
+        loss = BinaryCrossEntropyLoss().to(device)
+    else:
+        loss = CrossEntropyLoss().to(device)
     # optimizer
     optimizer = torch.optim.Adam(params=model.parameters(), lr=model_config['learning_rate'])
     start_epoch = 0
