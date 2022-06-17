@@ -2,6 +2,8 @@ data_config = {
     'train_metadata_path': 'metadata/binary_train.csv',  # CSV containing audio URLs, Questions, Answers,filenames
     'val_metadata_path': 'metadata/binary_val.csv',
     'test_metadata_path': 'metadata/binary_test.csv',
+    'output_classes_file': 'metadata/output_classes.json',
+
     'data_dir': 'dataset/audio_files',  # path to store downloaded data
     'feat_dir': 'dataset/features',
     'pre_trained_word_embeddings_file': 'wiki-news-300d-1M.vec',
@@ -43,6 +45,8 @@ if 'binary' in data_config['train_metadata_path']:
     model_config['n_classes'] = 1
 else:
     model_config['n_classes'] = 828
+    model_config['audio_lstm_hidden_size'] = 512
+    model_config['text_lstm_hidden_size'] = 512
 
 dense1_input = 0
 if model_config['audio_bidirectional']:

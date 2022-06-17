@@ -1,6 +1,6 @@
 import os
 from torch.utils.data.dataset import Dataset
-from utils import load_vectors, read_metadata
+from utils import load_vectors, read_metadata, load_answers_dict
 import numpy as np
 
 
@@ -18,6 +18,7 @@ class DataGenerator(Dataset):
 
         self.word_embedding_path = data_config['pre_trained_word_embeddings_file']
         self.word_embeddings = load_vectors(self.word_embedding_path)  # dict of all the {'word': [vector]} pairs
+        self.answers_dict = load_answers_dict(data_config['output_classes_file'])
 
     def __getitem__(self, item):
         audio_feat = self.load_audio_features(item)
@@ -25,10 +26,14 @@ class DataGenerator(Dataset):
         answer_text = self.ans[item]
         question_embedding = self.get_word_embeddings(question_text)
 
-        if answer_text == 'YES':
-            label = 0 
+        if 'binary' in self.meta_file:
+            if answer_text == 'YES':
+                label = 0
+            else:
+                label = 1
         else:
-            label = 1
+            label = self.answers_dict[answer_text]
+
         return audio_feat, question_embedding, label
 
     def load_audio_features(self, idx):

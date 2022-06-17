@@ -53,10 +53,19 @@ def train(pre_trained=None):
     train_accuracy = np.zeros(model_config['num_epochs'])
     val_accuracy = np.zeros(model_config['num_epochs'])
 
+    if 'binary' not in data_config['train_metadata_path']:
+        top5_train_accuracy = np.zeros(model_config['num_epochs'])
+        top5_val_accuracy = np.zeros(model_config['num_epochs'])
+        top10_train_accuracy = np.zeros(model_config['num_epochs'])
+        top10_val_accuracy = np.zeros(model_config['num_epochs'])
+
     # training loop
     for epoch in range(start_epoch, model_config['num_epochs']):
         c_loss = 0
         acc = 0
+        if 'binary' not in data_config['train_metadata_path']:
+            top5_acc = 0
+            top10_acc = 0
         for i, (audio_feat, text_feat, label) in enumerate(iterator):
             audio_feat = audio_feat.to(device, dtype=torch.float)
             text_feat = text_feat.to(device, dtype=torch.float)
@@ -70,10 +79,17 @@ def train(pre_trained=None):
             c_loss += l.item()
 
             # calc accuracy
-            pred = torch.round(logits)
-            pred = pred.detach().cpu().numpy()
-            label = label.detach().cpu().numpy()
-            acc += utils.classification_accuracy(pred, label)
+            if 'binary' in data_config['train_metadata_path']:
+                pred = torch.round(logits)
+                pred = pred.detach().cpu().numpy()
+                label = label.detach().cpu().numpy()
+                acc += utils.binary_classification_accuracy(pred, label)
+            else:
+                logits = logits.detach().cpu().numpy()
+                label = label.detach().cpu().numpy()
+                acc += utils.multiclass_classification_accuracy(logits, label)
+                top5_acc += utils.multiclass_classification_accuracy(logits, label, k=5)
+                top10_acc += utils.multiclass_classification_accuracy(logits, label, k=10)
 
         # average loss per epoch
         classification_loss[epoch] = c_loss/(i+1)
@@ -83,8 +99,18 @@ def train(pre_trained=None):
         print("epoch = {}, average classification loss ={}".format(epoch, classification_loss[epoch]))
         print("epoch = {}, Training accuracy ={}".format(epoch, train_accuracy[epoch]))
 
+        if 'binary' not in data_config['train_metadata_path']:
+            top5_train_accuracy[epoch] = top5_acc/(i+1)
+            top10_train_accuracy[epoch] = top10_acc/(i+1)
+            print("epoch = {}, Top 5 Training accuracy ={}".format(epoch, top5_train_accuracy[epoch]))
+            print("epoch = {}, Top10 Training accuracy ={}".format(epoch, top10_train_accuracy[epoch]))
+
         with torch.no_grad():
             val_acc = 0
+            if 'binary' not in data_config['train_metadata_path']:
+                top5_val_acc = 0
+                top10_val_acc = 0
+
             for i, (audio_feat, text_feat, label) in enumerate(val_set_iterator):
                 audio_feat = audio_feat.to(device, dtype=torch.float)
                 text_feat = text_feat.to(device, dtype=torch.float)
@@ -92,13 +118,25 @@ def train(pre_trained=None):
                 logits = model(audio_feat, text_feat)
 
                 # calc accuracy
-                pred = torch.round(logits)
-                pred = pred.detach().cpu().numpy()
-                label = label.detach().cpu().numpy()
-                val_acc += utils.classification_accuracy(pred, label)
+                if 'binary' in data_config['train_metadata_path']:
+                    pred = torch.round(logits)
+                    pred = pred.detach().cpu().numpy()
+                    label = label.detach().cpu().numpy()
+                    val_acc += utils.binary_classification_accuracy(pred, label)
+                else:
+                    logits = logits.detach().cpu().numpy()
+                    label = label.detach().cpu().numpy()
+                    val_acc += utils.multiclass_classification_accuracy(logits, label)
+                    top5_val_acc += utils.multiclass_classification_accuracy(logits, label, k=5)
+                    top10_val_acc += utils.multiclass_classification_accuracy(logits, label, k=10)
 
         val_accuracy[epoch] = val_acc/(i+1)
         print("epoch = {},  Validation set accuracy ={}".format(epoch, val_accuracy[epoch]))
+        if 'binary' not in data_config['train_metadata_path']:
+            top5_val_accuracy[epoch] = top5_val_acc/(i+1)
+            top10_val_accuracy[epoch] = top10_val_acc/(i+1)
+            print("epoch = {},  Top 5 Validation set accuracy ={}".format(epoch, top5_val_accuracy[epoch]))
+            print("epoch = {},  Top 10 Validation set accuracy ={}".format(epoch, top10_val_accuracy[epoch]))
         print('***********************************************************')
 
         # plot accuracy curves and save model
@@ -109,6 +147,23 @@ def train(pre_trained=None):
         plt.legend(loc='best')
         plt.savefig(checkpoints_folder + "/accuracy.jpeg", bbox_inches="tight")
         plt.clf()
+        if 'binary' not in data_config['train_metadata_path']:
+            plt.plot(range(1, len(top5_train_accuracy)+1), top5_train_accuracy, 'b-', label="Top 5 Train Accuracy")
+            plt.plot(range(1, len(top5_val_accuracy)+1), top5_val_accuracy, 'r-', label=" Top 5 Validation Accuracy")
+            plt.xlabel("epochs")
+            plt.ylabel("accuracy")
+            plt.legend(loc='best')
+            plt.savefig(checkpoints_folder + "/top5_accuracy.jpeg", bbox_inches="tight")
+            plt.clf()
+
+            plt.plot(range(1, len(top10_train_accuracy)+1), top10_train_accuracy, 'b-', label="Top 10 Train Accuracy")
+            plt.plot(range(1, len(top10_val_accuracy)+1), top10_val_accuracy, 'r-', label="Top 10 Validation Accuracy")
+            plt.xlabel("epochs")
+            plt.ylabel("accuracy")
+            plt.legend(loc='best')
+            plt.savefig(checkpoints_folder + "/top10_accuracy.jpeg", bbox_inches="tight")
+            plt.clf()
+
         if (epoch+1) % 10 == 0: # save every 10th epoch
             net_save = {'net': model.state_dict(), 'opt': optimizer.state_dict(), 'epoch': epoch}
             torch.save(net_save, checkpoints_folder + "/aquanet_epoch{}.pth".format(epoch))

@@ -31,7 +31,7 @@ class AquaNet(nn.Module):
         dense_out = F.relu(self.dense_layer1(merge_feat))
         dense_out = F.relu(self.dense_layer2(dense_out))
         
-        if hp[n_classes]==1:
+        if self.hp['n_classes'] == 1:
             logits = self.sigmoid(self.classification_layer(dense_out))
         else:
             logits = self.classification_layer(dense_out)
@@ -48,6 +48,7 @@ class BinaryCrossEntropyLoss(nn.Module):
         target = torch.reshape(target, [-1])
         loss = self.bce_loss(prediction, target)
         return loss
+
 
 class CrossEntropyLoss(nn.Module):
     def __init__(self):

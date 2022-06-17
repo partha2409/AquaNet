@@ -22,6 +22,9 @@ def run_inference(model_dir, model_path):
 
     with torch.no_grad():
         test_acc = 0
+        if hp['n_classes'] != 1:
+            top5_test_acc = 0
+            top10_test_acc = 0
         for i, (audio_feat, text_feat, label) in enumerate(test_iterator):
             audio_feat = audio_feat.to(device, dtype=torch.float)
             text_feat = text_feat.to(device, dtype=torch.float)
@@ -29,11 +32,23 @@ def run_inference(model_dir, model_path):
             logits = model(audio_feat, text_feat)
 
             # calc accuracy
-            pred = torch.round(logits)
-            pred = pred.detach().cpu().numpy()
-            label = label.detach().cpu().numpy()
-            test_acc += utils.classification_accuracy(pred, label)
+            if hp['n_classes'] == 1:
+                pred = torch.round(logits)
+                pred = pred.detach().cpu().numpy()
+                label = label.detach().cpu().numpy()
+                test_acc += utils.binary_classification_accuracy(pred, label)
+
+            else:
+                logits = logits.detach().cpu().numpy()
+                label = label.detach().cpu().numpy()
+                test_acc += utils.multiclass_classification_accuracy(logits, label)
+                top5_test_acc += utils.multiclass_classification_accuracy(logits, label, k=5)
+                top10_test_acc += utils.multiclass_classification_accuracy(logits, label, k=10)
+
         print("Test set accuracy ={}".format(test_acc/(i+1)))
+        if hp['n_classes'] != 1:
+            print("Top 5 Test set accuracy ={}".format(top5_test_acc/(i+1)))
+            print("Top 10 Test set accuracy ={}".format(top10_test_acc/(i+1)))
 
 
 if __name__ == '__main__':
