@@ -1,4 +1,5 @@
 import pandas as pd
+import json
 
 
 def split_data_into_binary_and_single_word_answers(csv_file, split):
