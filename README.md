@@ -11,7 +11,7 @@ Now, run `extract_features.py` . This may take a while to compute the embeddings
 
 We also use Fasttext word vectors trained on Wikipedia 2017, UMBC webbase corpus and statmt.org news dataset to create word embeddings for our questions. This can be downloaded from https://dl.fbaipublicfiles.com/fasttext/vectors-english/wiki-news-300d-1M.vec.zip 
 # Training the model
-First, run `split_dataset.py` to generate csv files for binary answers and single word answers. The code currently works for binary classification answers. I will soon update the code for single-word answers.
+First, run `split_dataset.py` to generate csv files for binary answers and single word answers.
 
 To train the model run `train.py`. The model checkpoint will be saved for every 10 epochs. If you want to continue training from a saved checkpoint, assign the checkpoint path to `pre_trained_model_path` variable in `train.py`
 # Inference
