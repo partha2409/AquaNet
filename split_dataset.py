@@ -28,7 +28,7 @@ split_data_into_binary_and_single_word_answers(csv_file_test, 'test')
 
 # create word-index for single word answers
 csv_file = 'metadata\\single_word_train.csv'
-csv_data = pd.read_csv(csv_file, encoding='latin1', usecols=usecols=['file_name', 'QuestionText', 'answer'])
+csv_data = pd.read_csv(csv_file, encoding='latin1', usecols=['file_name', 'QuestionText', 'answer'])
 
 csv_data['answer'] = csv_data['answer'].str.upper()
 
