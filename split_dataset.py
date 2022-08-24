@@ -19,8 +19,8 @@ def split_data_into_binary_and_single_word_answers(csv_file, split):
 
 
 csv_file_train = 'metadata\\clotho_aqa_train.csv'
-csv_file_val = 'metadata\\clotho_aqa_train.csv'
-csv_file_test = 'metadata\\clotho_aqa_train.csv'
+csv_file_val = 'metadata\\clotho_aqa_val.csv'
+csv_file_test = 'metadata\\clotho_aqa_test.csv'
 
 split_data_into_binary_and_single_word_answers(csv_file_train, 'train')
 split_data_into_binary_and_single_word_answers(csv_file_val, 'val')
