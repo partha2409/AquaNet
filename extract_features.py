@@ -4,8 +4,8 @@ import os
 
 
 def main():
-    dataset_path = data_config['data_dir']
-    feat_dir = data_config['feat_dir']
+    dataset_path = data_config['data_dir'] # folder containing audio files
+    feat_dir = data_config['feat_dir'] # folder to store the extracted features
 
     os.makedirs(feat_dir, exist_ok=True)
     audio_files = os.listdir(dataset_path)
