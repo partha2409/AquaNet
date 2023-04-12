@@ -47,6 +47,8 @@ else:
     model_config['n_classes'] = 828
     model_config['audio_lstm_hidden_size'] = 512
     model_config['text_lstm_hidden_size'] = 512
+    model_config['n_dense1_units'] = 1024
+    model_config['n_dense2_units'] = 1024
 
 dense1_input = 0
 if model_config['audio_bidirectional']:
